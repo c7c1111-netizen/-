@@ -7,18 +7,17 @@
 <style>
   *{box-sizing:border-box;}
   body{
-    margin:0; padding:24px 16px 60px;
+    margin:0; padding:24px 16px 90px;
     font-family:-apple-system,'SF Arabic','Segoe UI',Tahoma,Arial,sans-serif;
     background:#fff; color:#1a1a1a;
   }
   .wrap{max-width:1000px;margin:0 auto;}
   h1{font-size:22px;margin:0 0 20px;text-align:center;}
 
-  /* ===== Row of three boxes, matching the sketch ===== */
   .box-row{
     display:flex;
     gap:16px;
-    margin-bottom:24px;
+    margin-bottom:0;
     flex-wrap:wrap;
   }
   .box{
@@ -130,6 +129,109 @@
   .legend-chip.dom-occasions .legend-dot{background:#86efac;}
   .legend-chip.dom-periods .legend-dot{background:#94a3b8;}
 
+  .saved-plan-card{
+    border:1px solid #e0e0e0; border-radius:7px; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .saved-plan-card .info{flex:1; min-width:0;}
+  .saved-plan-card .info .title{font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .saved-plan-card .info .meta{font-size:12px; color:#888; margin-top:2px;}
+  .saved-plan-card .btns{display:flex; gap:6px; flex-shrink:0;}
+  .saved-plan-card .btn-mini.danger{border-color:#b04c4c; color:#b04c4c;}
+
+  /* ===== Step cards ===== */
+  .step-card{
+    background:#fafafa; border:1px solid #e4e4e4; border-radius:12px;
+    padding:18px 18px 20px; margin-bottom:20px;
+  }
+  .step-card-header{
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+  }
+  .step-num{
+    width:28px; height:28px; border-radius:50%; background:#1a1a1a; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:700; flex-shrink:0;
+  }
+  .step-title{font-size:16px; font-weight:700;}
+  .result-card{
+    background:#fff; border:2px solid #1a1a1a; border-radius:12px;
+    padding:20px; margin-top:8px;
+  }
+
+  /* ===== Grade-stage badge ===== */
+  .stage-badge{
+    display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px;
+    border-radius:12px; margin-top:6px;
+  }
+  .stage-badge.elem{background:#dbeafe; color:#1e40af;}
+  .stage-badge.mid{background:#fef3c7; color:#92400e;}
+  .stage-badge.high{background:#ede9fe; color:#5b21b6;}
+
+  /* ===== Progress bar ===== */
+  .progress-wrap{margin-top:12px;}
+  .progress-label{font-size:12.5px; color:#666; margin-bottom:5px; display:flex; justify-content:space-between;}
+  .progress-track{width:100%; height:10px; background:#e5e5e5; border-radius:6px; overflow:hidden;}
+  .progress-fill{height:100%; background:#0f3d3e; border-radius:6px; transition:width .35s ease;}
+
+  /* ===== Program search ===== */
+  #programSearch{
+    width:100%; font-family:inherit; font-size:14px; padding:9px 10px;
+    border:1px solid #999; border-radius:5px; background:#fff; color:#1a1a1a;
+    margin-bottom:8px;
+  }
+
+  /* ===== Transitions for revealed sections ===== */
+  @keyframes fadeSlideIn{
+    from{opacity:0; transform:translateY(-6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .program-wrap.show{animation:fadeSlideIn .25s ease;}
+  #scheduleWrap{animation:fadeSlideIn .3s ease;}
+  #savedPlansWrap{animation:fadeSlideIn .25s ease;}
+
+  /* ===== Floating quick-action bar ===== */
+  .floating-bar{
+    position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+    display:flex; gap:10px; background:#1a1a1a; padding:8px; border-radius:30px;
+    box-shadow:0 4px 16px rgba(0,0,0,.25); z-index:50;
+  }
+  .floating-bar button{
+    border:none; background:transparent; color:#fff; font-size:13px; font-weight:600;
+    padding:8px 14px; border-radius:22px; cursor:pointer; display:flex; align-items:center; gap:6px;
+  }
+  .floating-bar button:active{background:rgba(255,255,255,.15);}
+
+  @media print{ .floating-bar{display:none;} }
+
+  /* ===== Dark mode ===== */
+  @media (prefers-color-scheme: dark){
+    body{background:#141414; color:#eee;}
+    .box{border-color:#555;}
+    .step-card{background:#1c1c1c; border-color:#333;}
+    .step-num{background:#eee; color:#141414;}
+    select, input[type=text], input[type=date], input[type=time], textarea,
+    .domain-summary, #programSearch{
+      background:#242424; border-color:#555; color:#eee;
+    }
+    .sub-note{color:#aaa;}
+    .domain-check-row{border-color:#333;}
+    .domain-check-row:hover{background:#262626;}
+    .program-list{border-color:#444;}
+    .program-row{border-color:#333;}
+    .program-row:hover{background:#262626;}
+    .program-row.selected{background:#1e3a2e;}
+    .program-group-header{background:#242424; border-color:#333; color:#eee;}
+    .result-card{border-color:#eee; background:#1c1c1c;}
+    .pv-row{border-color:#333;}
+    .pv-row .k{color:#aaa;}
+    .btn-secondary{background:#2a2a2a; color:#eee;}
+    .btn-primary{background:#eee; color:#141414;}
+    .saved-plan-card{background:#1c1c1c; border-color:#333;}
+    .saved-plan-card .info .meta{color:#999;}
+    #savedPlansWrap{border-color:#333;}
+    .progress-track{background:#333;}
+  }
+
   @media print{
     .actions{display:none;}
     body.printing-schedule-only{
@@ -194,72 +296,95 @@
 <div class="wrap">
   <h1>مُعِدّ خطة النشاط الطلابي</h1>
 
-  <!-- الصندوق الثلاثي: الصف | المعلم | المجال (بنفس ترتيب الرسمة) -->
-  <div class="box-row">
-    <div class="box">
-      <label>الصف</label>
-      <select id="grade">
-        <option value="">— اختر —</option>
-        <optgroup label="مدرسة ابتدائية الهمذاني">
-          <option data-school="elem" data-pattern="monwed">الرابع الابتدائي</option>
-          <option data-school="elem" data-pattern="monwed">الخامس الابتدائي</option>
-          <option data-school="elem" data-pattern="monwed">السادس الابتدائي</option>
-        </optgroup>
-        <optgroup label="مدرسة متوسطة الترمذي">
-          <option data-school="mid" data-pattern="mon">أول متوسط أ</option>
-          <option data-school="mid" data-pattern="mon">أول متوسط ب</option>
-          <option data-school="mid" data-pattern="mon">ثاني متوسط أ</option>
-          <option data-school="mid" data-pattern="mon">ثاني متوسط ب</option>
-          <option data-school="mid" data-pattern="mon">ثالث متوسط أ</option>
-          <option data-school="mid" data-pattern="mon">ثالث متوسط ب</option>
-        </optgroup>
-        <optgroup label="مدرسة ثانوية أبو بكر الصديق">
-          <option data-school="high" data-pattern="mon">أول ثانوي أ</option>
-          <option data-school="high" data-pattern="mon">أول ثانوي ب</option>
-          <option data-school="high" data-pattern="mon">أول ثانوي ج</option>
-          <option data-school="high" data-pattern="monwed">ثاني ثانوي أ</option>
-          <option data-school="high" data-pattern="monwed">ثاني ثانوي ب</option>
-          <option data-school="high" data-pattern="mon">ثالث ثانوي أ</option>
-          <option data-school="high" data-pattern="mon">ثالث ثانوي ب</option>
-        </optgroup>
-      </select>
-      <div class="sub-note" id="schoolNote"></div>
+  <!-- ===== الخطوة 1: الصف والمعلم ===== -->
+  <div class="step-card">
+    <div class="step-card-header">
+      <span class="step-num">١</span>
+      <span class="step-title">الصف والمعلم</span>
     </div>
+    <div class="box-row">
+      <div class="box">
+        <label>الصف</label>
+        <select id="grade">
+          <option value="">— اختر —</option>
+          <optgroup label="مدرسة ابتدائية الهمذاني">
+            <option data-school="elem" data-pattern="monwed">الرابع الابتدائي</option>
+            <option data-school="elem" data-pattern="monwed">الخامس الابتدائي</option>
+            <option data-school="elem" data-pattern="monwed">السادس الابتدائي</option>
+          </optgroup>
+          <optgroup label="مدرسة متوسطة الترمذي">
+            <option data-school="mid" data-pattern="mon">أول متوسط أ</option>
+            <option data-school="mid" data-pattern="mon">أول متوسط ب</option>
+            <option data-school="mid" data-pattern="mon">ثاني متوسط أ</option>
+            <option data-school="mid" data-pattern="mon">ثاني متوسط ب</option>
+            <option data-school="mid" data-pattern="mon">ثالث متوسط أ</option>
+            <option data-school="mid" data-pattern="mon">ثالث متوسط ب</option>
+          </optgroup>
+          <optgroup label="مدرسة ثانوية أبو بكر الصديق">
+            <option data-school="high" data-pattern="mon">أول ثانوي أ</option>
+            <option data-school="high" data-pattern="mon">أول ثانوي ب</option>
+            <option data-school="high" data-pattern="mon">أول ثانوي ج</option>
+            <option data-school="high" data-pattern="monwed">ثاني ثانوي أ</option>
+            <option data-school="high" data-pattern="monwed">ثاني ثانوي ب</option>
+            <option data-school="high" data-pattern="mon">ثالث ثانوي أ</option>
+            <option data-school="high" data-pattern="mon">ثالث ثانوي ب</option>
+          </optgroup>
+        </select>
+        <div class="sub-note" id="schoolNote"></div>
+        <div id="stageBadge"></div>
+      </div>
 
-    <div class="box">
-      <label>المعلم</label>
-      <select id="teacher">
-        <option value="">— اختر —</option>
-      </select>
-    </div>
+      <div class="box">
+        <label>المعلم</label>
+        <select id="teacher">
+          <option value="">— اختر —</option>
+        </select>
+      </div>
 
-    <div class="box">
-      <label>المجال</label>
-      <div id="domainSummary" class="domain-summary" tabindex="0">اختر المجالات (اضغط هنا)</div>
+      <div class="box">
+        <label>المجال</label>
+        <div id="domainSummary" class="domain-summary" tabindex="0">اختر المجالات (اضغط هنا)</div>
+      </div>
     </div>
   </div>
 
-  <div class="field">
-    <button class="btn-mini" id="autoFillOccasionsBtn" style="width:100%;padding:10px;">
-      📌 عبّي مناسبات الفصل الأول تلقائيًا (اليوم الوطني، التسامح، الطفل، ذوي الإعاقة، اللغة العربية)
-    </button>
-  </div>
+  <!-- ===== الخطوة 2: المجال والنشاط ===== -->
+  <div class="step-card">
+    <div class="step-card-header">
+      <span class="step-num">٢</span>
+      <span class="step-title">المجال والنشاط</span>
+    </div>
 
-  <!-- قائمة تحديد المجالات (متعدد الاختيار) -->
-  <div class="program-wrap" id="domainChecklistWrap">
     <div class="field">
-      <label>حدد مجالًا واحدًا أو أكثر</label>
-      <div class="program-list" id="domainChecklist"></div>
+      <button class="btn-mini" id="autoFillOccasionsBtn" style="width:100%;padding:10px;">
+        📌 عبّي مناسبات الفصل الأول تلقائيًا (اليوم الوطني، التسامح، الطفل، ذوي الإعاقة، اللغة العربية)
+      </button>
+    </div>
+
+    <!-- قائمة تحديد المجالات (متعدد الاختيار) -->
+    <div class="program-wrap" id="domainChecklistWrap">
+      <div class="field">
+        <label>حدد مجالًا واحدًا أو أكثر</label>
+        <div class="program-list" id="domainChecklist"></div>
+      </div>
+    </div>
+
+    <!-- قائمة البرامج تظهر بعد اختيار مجال واحد على الأقل -->
+    <div class="program-wrap" id="programWrap">
+      <div class="field">
+        <label>اختر البرنامج / الموضوع</label>
+        <input type="text" id="programSearch" placeholder="🔍 ابحث عن برنامج...">
+        <div class="program-list" id="programList"></div>
+      </div>
     </div>
   </div>
 
-  <!-- قائمة البرامج تظهر بعد اختيار مجال واحد على الأقل -->
-  <div class="program-wrap" id="programWrap">
-    <div class="field">
-      <label>اختر البرنامج / الموضوع</label>
-      <div class="program-list" id="programList"></div>
+  <!-- ===== الخطوة 3: الجدول ===== -->
+  <div class="step-card">
+    <div class="step-card-header">
+      <span class="step-num">٣</span>
+      <span class="step-title">جدول توزيع الحصص</span>
     </div>
-  </div>
 
   <!-- جدول توزيع الحصص التلقائي (يظهر للمرحلة الابتدائية فقط) -->
   <div class="field" id="scheduleWrap" style="display:none;">
@@ -285,6 +410,13 @@
       </table>
     </div>
     <div id="scheduleLegend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
+    <div class="progress-wrap print-only-hide" id="progressWrap" style="display:none;">
+      <div class="progress-label">
+        <span>الحصص المستخدمة من أيام النشاط المتاحة</span>
+        <span id="progressText">0 / 0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+    </div>
     <div class="print-footer print-only">
       <span id="printFooterDate"></span>
       <span>مُعِدّ خطة النشاط الطلابي</span>
@@ -295,6 +427,14 @@
       <button class="btn btn-secondary" id="downloadScheduleImageBtn" style="flex:1;">تنزيل الجدول صورة</button>
     </div>
   </div>
+  </div>
+
+  <!-- ===== الخطوة 4: تفاصيل الخطة ===== -->
+  <div class="step-card">
+    <div class="step-card-header">
+      <span class="step-num">٤</span>
+      <span class="step-title">تفاصيل الخطة</span>
+    </div>
 
   <div class="field">
     <label>اسم النشاط</label>
@@ -336,8 +476,9 @@
     <label>ملاحظات</label>
     <textarea id="notes" placeholder="أي ملاحظات إضافية"></textarea>
   </div>
+  </div>
 
-  <div class="preview">
+  <div class="preview result-card">
     <h2>معاينة الخطة</h2>
     <div class="pv-row"><div class="k">الصف</div><div class="v" id="pvGrade">—</div></div>
     <div class="pv-row"><div class="k">المدرسة</div><div class="v" id="pvSchool">—</div></div>
@@ -358,7 +499,23 @@
       <button class="btn btn-primary" onclick="window.print()">طباعة / حفظ PDF</button>
       <button class="btn btn-secondary" id="resetBtn">تفريغ الخطة</button>
     </div>
+
+    <div class="actions" style="margin-top:10px;">
+      <button class="btn btn-secondary" id="savePlanBtn">💾 حفظ هذه الخطة</button>
+      <button class="btn btn-secondary" id="toggleSavedPlansBtn">📂 الخطط المحفوظة</button>
+    </div>
+
+    <div id="savedPlansWrap" style="display:none; margin-top:14px; border:1px solid #ddd; border-radius:8px; padding:12px;">
+      <div style="font-weight:700; font-size:14px; margin-bottom:8px;">الخطط المحفوظة</div>
+      <div id="savedPlansList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div id="savedPlansEmpty" style="display:none; font-size:13px; color:#888;">لا توجد خطط محفوظة بعد.</div>
+    </div>
   </div>
+</div>
+
+<div class="floating-bar">
+  <button id="floatSaveBtn">💾 حفظ</button>
+  <button id="floatJumpBtn">⬇️ النتيجة</button>
 </div>
 
 <script>
@@ -393,6 +550,18 @@ const DOMAIN_CLASS = {
   'الأيام والمناسبات': 'dom-occasions',
   'الفترات اللاصفية': 'dom-periods'
 };
+
+const DOMAIN_ICON = {
+  'المواطنة والحياة': '🇸🇦',
+  'العلوم والتقنية': '🔬',
+  'الثقافة والفنون': '🎨',
+  'الرياضة والصحة': '⚽',
+  'النشاط الكشفي': '🏕️',
+  'الأيام والمناسبات': '📅',
+  'الفترات اللاصفية': '⏰'
+};
+
+const STAGE_LABEL = { elem:'ابتدائي', mid:'متوسط', high:'ثانوي' };
 
 const domainsData = {
   'المواطنة والحياة': [
@@ -489,6 +658,8 @@ gradeEl.addEventListener('change', ()=>{
   const opt = gradeEl.selectedOptions[0];
   const key = opt ? opt.getAttribute('data-school') : null;
   document.getElementById('schoolNote').textContent = key ? schoolInfo[key] : '';
+  const stageBadge = document.getElementById('stageBadge');
+  stageBadge.innerHTML = key ? `<span class="stage-badge ${key}">${STAGE_LABEL[key]}</span>` : '';
   updateSchedule();
   updatePreview();
 });
@@ -501,7 +672,7 @@ let selectedDomains = [];
 Object.keys(domainsData).forEach(d=>{
   const row = document.createElement('div');
   row.className = 'domain-check-row';
-  row.innerHTML = `<input type="checkbox" data-domain="${d}"> <span>${d}</span>`;
+  row.innerHTML = `<input type="checkbox" data-domain="${d}"> <span>${DOMAIN_ICON[d]||''} ${d}</span>`;
   row.addEventListener('click', (e)=>{
     const cb = row.querySelector('input');
     if(e.target !== cb) cb.checked = !cb.checked;
@@ -550,7 +721,7 @@ function rebuildProgramList(){
   let globalIndex = 0;
   const flatItems = [];
   selectedDomains.forEach(d=>{
-    html += `<div class="program-group-header">${d}</div>`;
+    html += `<div class="program-group-header">${DOMAIN_ICON[d]||''} ${d}</div>`;
     domainsData[d].forEach(it=>{
       const item = {...it, domain:d};
       const isSel = isProgramSelected(item);
@@ -586,9 +757,41 @@ function rebuildProgramList(){
       updatePreview();
     });
   });
+  applyProgramSearchFilter();
   updateSchedule();
   updatePreview();
 }
+
+function applyProgramSearchFilter(){
+  const q = (document.getElementById('programSearch').value || '').trim();
+  const rows = programListEl.querySelectorAll('.program-row');
+  const headers = programListEl.querySelectorAll('.program-group-header');
+  if(!q){
+    rows.forEach(r=>r.style.display='');
+    headers.forEach(h=>h.style.display='');
+    return;
+  }
+  rows.forEach(r=>{
+    const match = r.textContent.includes(q);
+    r.style.display = match ? '' : 'none';
+  });
+  // إخفاء عنوان أي مجال لا تظهر تحته أي نتيجة بعد الفلترة
+  let node = programListEl.firstElementChild;
+  while(node){
+    if(node.classList.contains('program-group-header')){
+      let sibling = node.nextElementSibling;
+      let anyVisible = false;
+      while(sibling && !sibling.classList.contains('program-group-header')){
+        if(sibling.style.display !== 'none') anyVisible = true;
+        sibling = sibling.nextElementSibling;
+      }
+      node.style.display = anyVisible ? '' : 'none';
+    }
+    node = node.nextElementSibling;
+  }
+}
+
+document.getElementById('programSearch').addEventListener('input', applyProgramSearchFilter);
 
 document.getElementById('autoFillOccasionsBtn').addEventListener('click', ()=>{
   const OCCASIONS_DOMAIN = 'الأيام والمناسبات';
@@ -730,6 +933,7 @@ function updateSchedule(){
 
   if(selectedPrograms.length === 0){
     scheduleWrap.style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
     return [];
   }
 
@@ -755,6 +959,7 @@ function updateSchedule(){
     scheduleWrap.style.display = 'block';
     scheduleBody.innerHTML = '';
     document.getElementById('scheduleLegend').innerHTML = '';
+    document.getElementById('progressWrap').style.display = 'none';
     scheduleNote.textContent = 'اختر الصف أولًا لعرض الجدول التلقائي (أيام النشاط تعتمد على الصف المختار).';
     return [];
   }
@@ -801,8 +1006,16 @@ function updateSchedule(){
   const domainsUsed = [...new Set(flatRows.map(r=>r.prog.domain).filter(Boolean))];
   legendEl.innerHTML = domainsUsed.map(d=>{
     const cls = DOMAIN_CLASS[d] || '';
-    return `<span class="legend-chip ${cls}"><span class="legend-dot"></span>${d}</span>`;
+    return `<span class="legend-chip ${cls}"><span class="legend-dot"></span>${DOMAIN_ICON[d]||''} ${d}</span>`;
   }).join('');
+
+  const progressWrap = document.getElementById('progressWrap');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  progressWrap.style.display = 'block';
+  const pct = totalCount ? Math.min(100, Math.round((usedCount/totalCount)*100)) : 0;
+  progressFill.style.width = pct + '%';
+  progressText.textContent = `${usedCount} / ${totalCount}`;
 
   const termFinished = usedCount >= totalCount;
   if(termFinished && shortage){
@@ -845,10 +1058,10 @@ function updatePreview(){
   set('pvProgram', selectedPrograms.map(p=>p.name).join('، '));
   set('pvSessions', selectedPrograms.map(p=>p.sessions).filter(Boolean).join('، '));
   const gradeOptForSched = gradeEl.selectedOptions[0];
-  const schoolKeyForSched = gradeOptForSched ? gradeOptForSched.getAttribute('data-school') : null;
+  const patternForSched = gradeOptForSched ? gradeOptForSched.getAttribute('data-pattern') : null;
   let scheduleText = '';
-  const previewDateList = schoolKeyForSched === 'elem' ? SESSION_DATES
-    : schoolKeyForSched === 'mid' ? MID_SESSION_DATES
+  const previewDateList = patternForSched === 'monwed' ? SESSION_DATES
+    : patternForSched === 'mon' ? MID_SESSION_DATES
     : null;
   if(selectedPrograms.length && previewDateList){
     const {results: allocations} = allocateSchedule(selectedPrograms, previewDateList);
@@ -925,10 +1138,170 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
   domainChecklistWrap.classList.remove('show');
   refreshDomainSummary();
   document.getElementById('schoolNote').textContent='';
+  document.getElementById('stageBadge').innerHTML='';
+  document.getElementById('programSearch').value='';
   programWrap.classList.remove('show');
   selectedPrograms = [];
   updateSchedule();
   updatePreview();
+});
+
+// ===== حفظ الخطط =====
+const PLAN_KEY_PREFIX = 'plans:';
+
+function collectPlanFromForm(){
+  return {
+    id: PLAN_KEY_PREFIX + Date.now(),
+    savedAt: new Date().toISOString(),
+    grade: gradeEl.value,
+    teacher: document.getElementById('teacher').value,
+    selectedDomains: [...selectedDomains],
+    selectedPrograms: selectedPrograms.map(p=>({
+      name:p.name, sessions:p.sessions, domain:p.domain,
+      anchorDate: p.anchorDate || null
+    })),
+    actName: document.getElementById('actName').value,
+    goal: document.getElementById('goal').value,
+    date: document.getElementById('date').value,
+    time: document.getElementById('time').value,
+    place: document.getElementById('place').value,
+    tools: document.getElementById('tools').value,
+    steps: document.getElementById('steps').value,
+    notes: document.getElementById('notes').value
+  };
+}
+
+function applyPlanToForm(plan){
+  gradeEl.value = plan.grade || '';
+  gradeEl.dispatchEvent(new Event('change'));
+
+  document.getElementById('teacher').value = plan.teacher || '';
+  document.getElementById('teacher').dispatchEvent(new Event('change'));
+
+  selectedDomains = [...(plan.selectedDomains || [])];
+  domainChecklistEl.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.checked = selectedDomains.includes(cb.getAttribute('data-domain'));
+  });
+  refreshDomainSummary();
+  if(selectedDomains.length) domainChecklistWrap.classList.add('show');
+
+  selectedPrograms = (plan.selectedPrograms || []).map(p=>({...p}));
+  rebuildProgramList(); // يعيد الرسم، ويستدعي updateSchedule/updatePreview تلقائيًا
+
+  document.getElementById('actName').value = plan.actName || '';
+  document.getElementById('goal').value = plan.goal || '';
+  document.getElementById('date').value = plan.date || '';
+  document.getElementById('time').value = plan.time || '';
+  document.getElementById('place').value = plan.place || '';
+  document.getElementById('tools').value = plan.tools || '';
+  document.getElementById('steps').value = plan.steps || '';
+  document.getElementById('notes').value = plan.notes || '';
+
+  updateSchedule();
+  updatePreview();
+}
+
+async function renderSavedPlansList(){
+  const listEl = document.getElementById('savedPlansList');
+  const emptyEl = document.getElementById('savedPlansEmpty');
+  if(!hasStorage){
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'حفظ الخطط غير متاح في هذه البيئة حاليًا.';
+    return;
+  }
+  let keysRes;
+  try{
+    keysRes = await window.storage.list(PLAN_KEY_PREFIX, false);
+  }catch(e){
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'تعذر تحميل الخطط المحفوظة.';
+    return;
+  }
+  const keys = (keysRes && keysRes.keys) || [];
+  if(!keys.length){
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'لا توجد خطط محفوظة بعد.';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  const plans = [];
+  for(const key of keys){
+    try{
+      const res = await window.storage.get(key, false);
+      if(res && res.value) plans.push(JSON.parse(res.value));
+    }catch(e){ /* تجاهل أي مفتاح تالف */ }
+  }
+  plans.sort((a,b)=> (b.savedAt||'').localeCompare(a.savedAt||''));
+
+  listEl.innerHTML = plans.map(plan=>{
+    const dateStr = plan.savedAt ? new Date(plan.savedAt).toLocaleDateString('ar-SA', {year:'numeric', month:'long', day:'numeric'}) : '';
+    const titleParts = [];
+    if(plan.actName) titleParts.push(plan.actName);
+    else if(plan.selectedPrograms && plan.selectedPrograms.length) titleParts.push(plan.selectedPrograms.map(p=>p.name).join(' + '));
+    else titleParts.push('خطة بدون اسم نشاط');
+    const metaParts = [plan.grade, plan.teacher].filter(Boolean).join(' — ');
+    return `
+      <div class="saved-plan-card" data-id="${plan.id}">
+        <div class="info">
+          <div class="title">${titleParts.join(' ')}</div>
+          <div class="meta">${metaParts}${metaParts ? ' · ' : ''}${dateStr}</div>
+        </div>
+        <div class="btns">
+          <button class="btn-mini load-plan-btn" data-id="${plan.id}">تحميل</button>
+          <button class="btn-mini danger delete-plan-btn" data-id="${plan.id}">حذف</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.load-plan-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const plan = plans.find(p=>p.id === btn.dataset.id);
+      if(plan) applyPlanToForm(plan);
+      document.getElementById('savedPlansWrap').style.display = 'none';
+    });
+  });
+  listEl.querySelectorAll('.delete-plan-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      try{ await window.storage.delete(btn.dataset.id, false); }catch(e){}
+      renderSavedPlansList();
+    });
+  });
+}
+
+document.getElementById('savePlanBtn').addEventListener('click', async ()=>{
+  if(!hasStorage){
+    alert('حفظ الخطط غير متاح في هذه البيئة حاليًا.');
+    return;
+  }
+  const plan = collectPlanFromForm();
+  try{
+    await window.storage.set(plan.id, JSON.stringify(plan), false);
+    alert('تم حفظ الخطة ✅');
+  }catch(e){
+    alert('تعذر حفظ الخطة، جرّب مرة أخرى.');
+  }
+});
+
+document.getElementById('toggleSavedPlansBtn').addEventListener('click', ()=>{
+  const wrap = document.getElementById('savedPlansWrap');
+  const showing = wrap.style.display !== 'none';
+  if(showing){
+    wrap.style.display = 'none';
+  } else {
+    wrap.style.display = 'block';
+    renderSavedPlansList();
+  }
+});
+
+document.getElementById('floatSaveBtn').addEventListener('click', ()=>{
+  document.getElementById('savePlanBtn').click();
+});
+document.getElementById('floatJumpBtn').addEventListener('click', ()=>{
+  document.querySelector('.result-card').scrollIntoView({behavior:'smooth', block:'start'});
 });
 
 try{ renderTeachers(); }catch(e){ console.error(e); }
