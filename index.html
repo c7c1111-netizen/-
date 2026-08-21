@@ -208,8 +208,12 @@
     body.printing-schedule-only{
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    body.printing-schedule-only .wrap > *:not(#scheduleWrap){display:none !important;}
+    body.printing-schedule-only .wrap > *:not(#scheduleStepCard){display:none !important;}
     body.printing-schedule-only #scheduleWrap #scheduleActions{display:none !important;}
+    body.printing-schedule-only #scheduleStepCard{
+      border:none; background:none; padding:0; margin:0;
+    }
+    body.printing-schedule-only #scheduleStepCard > .step-card-header{display:none !important;}
 
     body.printing-schedule-only #scheduleWrap{
       border:none; padding:0;
@@ -351,7 +355,7 @@
   </div>
 
   <!-- ===== الخطوة 3: الجدول ===== -->
-  <div class="step-card">
+  <div class="step-card" id="scheduleStepCard">
     <div class="step-card-header">
       <span class="step-num">٣</span>
       <span class="step-title">جدول توزيع الحصص</span>
@@ -600,21 +604,78 @@ const domainsData = {
 };
 
 let teachers = [...DEFAULT_TEACHERS];
-const hasStorage = typeof window !== 'undefined' && !!window.storage;
+
+// ===== طبقة تخزين موحّدة =====
+// window.storage تشتغل فقط داخل معاينة أدوات Claude، أما لو الملف مستضاف كموقع حقيقي
+// (مثل GitHub Pages) فهذه الميزة غير موجودة إطلاقًا، ونستخدم localStorage بدلاً منها تلقائيًا.
+const useNativeStorage = typeof window !== 'undefined' && !!window.storage;
+const useLocalStorage = (function(){
+  try{
+    if(typeof window === 'undefined' || !window.localStorage) return false;
+    const t = '__test__'; localStorage.setItem(t,'1'); localStorage.removeItem(t);
+    return true;
+  }catch(e){ return false; }
+})();
+const hasStorage = useNativeStorage || useLocalStorage;
+
+async function storageGet(key){
+  if(useNativeStorage){
+    try{ const r = await window.storage.get(key, false); return r ? r.value : null; }catch(e){ return null; }
+  }
+  if(useLocalStorage){
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
+  }
+  return null;
+}
+async function storageSet(key, value){
+  if(useNativeStorage){
+    try{ await window.storage.set(key, value, false); return true; }catch(e){ return false; }
+  }
+  if(useLocalStorage){
+    try{ localStorage.setItem(key, value); return true; }catch(e){ return false; }
+  }
+  return false;
+}
+async function storageDelete(key){
+  if(useNativeStorage){
+    try{ await window.storage.delete(key, false); return true; }catch(e){ return false; }
+  }
+  if(useLocalStorage){
+    try{ localStorage.removeItem(key); return true; }catch(e){ return false; }
+  }
+  return false;
+}
+async function storageListKeys(prefix){
+  if(useNativeStorage){
+    try{ const r = await window.storage.list(prefix, false); return (r && r.keys) || []; }catch(e){ return []; }
+  }
+  if(useLocalStorage){
+    const keys = [];
+    try{
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(k && k.indexOf(prefix) === 0) keys.push(k);
+      }
+    }catch(e){}
+    return keys;
+  }
+  return [];
+}
+
 const TEACHER_KEY = 'nashat:teachers';
 
 async function loadTeachers(){
   if(!hasStorage){ renderTeachers(); return; }
   try{
-    const res = await window.storage.get(TEACHER_KEY, false);
-    teachers = (res && res.value) ? JSON.parse(res.value) : [...DEFAULT_TEACHERS];
+    const val = await storageGet(TEACHER_KEY);
+    teachers = val ? JSON.parse(val) : [...DEFAULT_TEACHERS];
   }catch(e){ teachers = [...DEFAULT_TEACHERS]; }
   renderTeachers();
   saveTeachers();
 }
 async function saveTeachers(){
   if(!hasStorage) return;
-  try{ await window.storage.set(TEACHER_KEY, JSON.stringify(teachers), false); }catch(e){}
+  try{ await storageSet(TEACHER_KEY, JSON.stringify(teachers)); }catch(e){}
 }
 function renderTeachers(){
   const sel = document.getElementById('teacher');
@@ -1178,19 +1239,18 @@ async function renderSavedPlansList(){
   if(!hasStorage){
     listEl.innerHTML = '';
     emptyEl.style.display = 'block';
-    emptyEl.textContent = 'حفظ الخطط غير متاح في هذه البيئة حاليًا.';
+    emptyEl.textContent = 'حفظ الخطط غير متاح في هذا المتصفح حاليًا.';
     return;
   }
-  let keysRes;
+  let keys;
   try{
-    keysRes = await window.storage.list(PLAN_KEY_PREFIX, false);
+    keys = await storageListKeys(PLAN_KEY_PREFIX);
   }catch(e){
     listEl.innerHTML = '';
     emptyEl.style.display = 'block';
     emptyEl.textContent = 'تعذر تحميل الخطط المحفوظة.';
     return;
   }
-  const keys = (keysRes && keysRes.keys) || [];
   if(!keys.length){
     listEl.innerHTML = '';
     emptyEl.style.display = 'block';
@@ -1202,8 +1262,8 @@ async function renderSavedPlansList(){
   const plans = [];
   for(const key of keys){
     try{
-      const res = await window.storage.get(key, false);
-      if(res && res.value) plans.push(JSON.parse(res.value));
+      const val = await storageGet(key);
+      if(val) plans.push(JSON.parse(val));
     }catch(e){ /* تجاهل أي مفتاح تالف */ }
   }
   plans.sort((a,b)=> (b.savedAt||'').localeCompare(a.savedAt||''));
@@ -1237,7 +1297,7 @@ async function renderSavedPlansList(){
   });
   listEl.querySelectorAll('.delete-plan-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      try{ await window.storage.delete(btn.dataset.id, false); }catch(e){}
+      try{ await storageDelete(btn.dataset.id); }catch(e){}
       renderSavedPlansList();
     });
   });
@@ -1245,12 +1305,13 @@ async function renderSavedPlansList(){
 
 document.getElementById('savePlanBtn').addEventListener('click', async ()=>{
   if(!hasStorage){
-    alert('حفظ الخطط غير متاح في هذه البيئة حاليًا.');
+    alert('حفظ الخطط غير متاح في هذا المتصفح حاليًا.');
     return;
   }
   const plan = collectPlanFromForm();
   try{
-    await window.storage.set(plan.id, JSON.stringify(plan), false);
+    const ok = await storageSet(plan.id, JSON.stringify(plan));
+    if(!ok) throw new Error('save failed');
     alert('تم حفظ الخطة ✅');
   }catch(e){
     alert('تعذر حفظ الخطة، جرّب مرة أخرى.');
