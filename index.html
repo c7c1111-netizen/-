@@ -203,35 +203,6 @@
 
   @media print{ .floating-bar{display:none;} }
 
-  /* ===== Dark mode ===== */
-  @media (prefers-color-scheme: dark){
-    body{background:#141414; color:#eee;}
-    .box{border-color:#555;}
-    .step-card{background:#1c1c1c; border-color:#333;}
-    .step-num{background:#eee; color:#141414;}
-    select, input[type=text], input[type=date], input[type=time], textarea,
-    .domain-summary, #programSearch{
-      background:#242424; border-color:#555; color:#eee;
-    }
-    .sub-note{color:#aaa;}
-    .domain-check-row{border-color:#333;}
-    .domain-check-row:hover{background:#262626;}
-    .program-list{border-color:#444;}
-    .program-row{border-color:#333;}
-    .program-row:hover{background:#262626;}
-    .program-row.selected{background:#1e3a2e;}
-    .program-group-header{background:#242424; border-color:#333; color:#eee;}
-    .result-card{border-color:#eee; background:#1c1c1c;}
-    .pv-row{border-color:#333;}
-    .pv-row .k{color:#aaa;}
-    .btn-secondary{background:#2a2a2a; color:#eee;}
-    .btn-primary{background:#eee; color:#141414;}
-    .saved-plan-card{background:#1c1c1c; border-color:#333;}
-    .saved-plan-card .info .meta{color:#999;}
-    #savedPlansWrap{border-color:#333;}
-    .progress-track{background:#333;}
-  }
-
   @media print{
     .actions{display:none;}
     body.printing-schedule-only{
