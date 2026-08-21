@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مُعِدّ خطة النشاط الطلابي</title>
+<style>
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:24px 16px 60px;
+    font-family:-apple-system,'SF Arabic','Segoe UI',Tahoma,Arial,sans-serif;
+    background:#fff; color:#1a1a1a;
+  }
+  .wrap{max-width:1000px;margin:0 auto;}
+  h1{font-size:22px;margin:0 0 20px;text-align:center;}
+
+  /* ===== Row of three boxes, matching the sketch ===== */
+  .box-row{
+    display:flex;
+    gap:16px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .box{
+    flex:1;
+    min-width:200px;
+    border:2px solid #1a1a1a;
+    border-radius:4px;
+    padding:14px 16px;
+  }
+  .box label{
+    display:block;
+    font-size:15px;
+    font-weight:700;
+    margin-bottom:8px;
+    text-align:center;
+  }
+  select{
+    width:100%;
+    font-family:inherit;
+    font-size:15px;
+    padding:9px 10px;
+    border:1px solid #999;
+    border-radius:5px;
+    background:#fafafa;
+    color:#1a1a1a;
+  }
+  .sub-note{
+    font-size:12px; color:#666; margin-top:6px; text-align:center;
+  }
+
+  .domain-summary{
+    width:100%; font-size:14px; padding:9px 10px; border:1px solid #999;
+    border-radius:5px; background:#fafafa; color:#1a1a1a; cursor:pointer; min-height:20px;
+  }
+  .domain-check-row{
+    display:flex; align-items:center; gap:10px; padding:10px 14px;
+    border-bottom:1px solid #eee; font-size:14.5px; cursor:pointer;
+  }
+  .domain-check-row:last-child{border-bottom:none;}
+  .domain-check-row:hover{background:#f5f5f5;}
+  .program-group-header{
+    padding:8px 14px; font-size:13px; font-weight:700; background:#f0f0f0;
+    border-bottom:1px solid #ddd;
+  }
+
+  /* ===== Program list that appears once a المجال is chosen ===== */
+  .program-wrap{display:none; margin-bottom:24px;}
+  .program-wrap.show{display:block;}
+  .program-list{
+    border:1px solid #ccc; border-radius:6px; overflow:hidden;
+  }
+  .program-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 14px; border-bottom:1px solid #eee; font-size:14.5px; cursor:pointer;
+  }
+  .program-row:last-child{border-bottom:none;}
+  .program-row:hover{background:#f5f5f5;}
+  .program-row.selected{background:#eef6ee; font-weight:700;}
+  .program-row .sessions{color:#666; font-size:13px; white-space:nowrap; padding-right:10px;}
+
+  /* ===== Rest of the plan fields ===== */
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:14px; font-weight:600; margin-bottom:6px;}
+  input[type=text], input[type=date], input[type=time], textarea{
+    width:100%; font-family:inherit; font-size:15px; padding:10px 12px;
+    border:1px solid #999; border-radius:5px; background:#fafafa; color:#1a1a1a;
+  }
+  textarea{resize:vertical; min-height:60px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+
+  /* Preview */
+  .preview{border:2px solid #1a1a1a; border-radius:6px; padding:20px; margin-top:26px;}
+  .preview h2{font-size:16px; margin:0 0 14px; text-align:center;}
+  .pv-row{display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed #ddd; font-size:14.5px;}
+  .pv-row .k{width:120px; flex-shrink:0; color:#666; font-weight:600;}
+  .pv-row .v{flex:1;}
+  .pv-empty{color:#aaa; font-style:italic;}
+
+  .actions{display:flex; gap:10px; margin-top:20px;}
+  .btn{flex:1; padding:11px; border-radius:6px; border:none; cursor:pointer; font-weight:700; font-size:14.5px;}
+  .btn-primary{background:#1a1a1a; color:#fff;}
+  .btn-secondary{background:#eee; color:#1a1a1a;}
+  .print-only{display:none;}
+  #scheduleMeta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
+  #scheduleMeta .meta-pill{
+    background:#eef2f2; color:#0f3d3e; font-size:12.5px; font-weight:600;
+    padding:4px 12px; border-radius:14px;
+  }
+
+  @media print{
+    .actions{display:none;}
+    body.printing-schedule-only{
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    body.printing-schedule-only .wrap > *:not(#scheduleWrap){display:none !important;}
+    body.printing-schedule-only #scheduleWrap #scheduleActions{display:none !important;}
+
+    body.printing-schedule-only #scheduleWrap{
+      border:none; padding:0;
+    }
+    body.printing-schedule-only .print-header{
+      display:block !important;
+      border-bottom:4px solid #0f3d3e;
+      padding-bottom:14px;
+      margin-bottom:18px;
+      text-align:center;
+    }
+    body.printing-schedule-only .print-header .print-eyebrow{
+      display:block !important;
+      font-size:11px; letter-spacing:.08em; color:#0f3d3e; font-weight:700; margin-bottom:4px;
+    }
+    body.printing-schedule-only #scheduleTitle{
+      display:block; font-size:20px; font-weight:800; color:#0f3d3e; margin-bottom:8px;
+    }
+    body.printing-schedule-only #scheduleMeta{
+      display:flex !important; justify-content:center; gap:10px; flex-wrap:wrap;
+      font-size:12.5px; font-weight:600; color:#333; margin-bottom:0;
+    }
+    body.printing-schedule-only #scheduleMeta .meta-pill{
+      background:#eaf3f2; color:#0f3d3e; padding:4px 12px; border-radius:14px;
+    }
+    body.printing-schedule-only .sched-table-wrap{
+      border:1px solid #cfdedd; border-radius:10px; overflow:hidden;
+    }
+    body.printing-schedule-only #scheduleTable{
+      border:none !important; width:100%;
+    }
+    body.printing-schedule-only #scheduleTable th{
+      background:#0f3d3e !important; color:#fff !important;
+      border:none !important; padding:10px 6px !important; font-size:12.5px;
+    }
+    body.printing-schedule-only #scheduleTable td{
+      border:none !important; border-bottom:1px solid #e5eceb !important;
+      padding:9px 6px !important; font-size:13px;
+    }
+    body.printing-schedule-only #scheduleTable tbody tr:nth-child(even) td{
+      background:#f4f9f8 !important;
+    }
+    body.printing-schedule-only #scheduleTable tbody tr:last-child td{
+      border-bottom:none !important;
+    }
+    body.printing-schedule-only .print-footer{
+      display:flex !important; justify-content:space-between;
+      font-size:10.5px; color:#888; margin-top:16px; padding-top:8px; border-top:1px solid #eee;
+    }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>مُعِدّ خطة النشاط الطلابي</h1>
+
+  <!-- الصندوق الثلاثي: الصف | المعلم | المجال (بنفس ترتيب الرسمة) -->
+  <div class="box-row">
+    <div class="box">
+      <label>الصف</label>
+      <select id="grade">
+        <option value="">— اختر —</option>
+        <optgroup label="مدرسة ابتدائية الهمذاني">
+          <option data-school="elem">الرابع الابتدائي</option>
+          <option data-school="elem">الخامس الابتدائي</option>
+          <option data-school="elem">السادس الابتدائي</option>
+        </optgroup>
+        <optgroup label="مدرسة متوسطة الترمذي">
+          <option data-school="mid">أول متوسط أ</option>
+          <option data-school="mid">أول متوسط ب</option>
+          <option data-school="mid">ثاني متوسط أ</option>
+          <option data-school="mid">ثاني متوسط ب</option>
+          <option data-school="mid">ثالث متوسط أ</option>
+          <option data-school="mid">ثالث متوسط ب</option>
+        </optgroup>
+        <optgroup label="مدرسة ثانوية أبو بكر الصديق">
+          <option data-school="high">أول ثانوي أ</option>
+          <option data-school="high">أول ثانوي ب</option>
+          <option data-school="high">أول ثانوي ج</option>
+          <option data-school="high">ثاني ثانوي أ</option>
+          <option data-school="high">ثاني ثانوي ب</option>
+          <option data-school="high">ثالث ثانوي أ</option>
+          <option data-school="high">ثالث ثانوي ب</option>
+        </optgroup>
+      </select>
+      <div class="sub-note" id="schoolNote"></div>
+    </div>
+
+    <div class="box">
+      <label>المعلم</label>
+      <select id="teacher">
+        <option value="">— اختر —</option>
+      </select>
+    </div>
+
+    <div class="box">
+      <label>المجال</label>
+      <div id="domainSummary" class="domain-summary" tabindex="0">اختر المجالات (اضغط هنا)</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <button class="btn-mini" id="autoFillOccasionsBtn" style="width:100%;padding:10px;">
+      📌 عبّي مناسبات الفصل الأول تلقائيًا (اليوم الوطني، التسامح، الطفل، ذوي الإعاقة، اللغة العربية)
+    </button>
+  </div>
+
+  <!-- قائمة تحديد المجالات (متعدد الاختيار) -->
+  <div class="program-wrap" id="domainChecklistWrap">
+    <div class="field">
+      <label>حدد مجالًا واحدًا أو أكثر</label>
+      <div class="program-list" id="domainChecklist"></div>
+    </div>
+  </div>
+
+  <!-- قائمة البرامج تظهر بعد اختيار مجال واحد على الأقل -->
+  <div class="program-wrap" id="programWrap">
+    <div class="field">
+      <label>اختر البرنامج / الموضوع</label>
+      <div class="program-list" id="programList"></div>
+    </div>
+  </div>
+
+  <!-- جدول توزيع الحصص التلقائي (يظهر للمرحلة الابتدائية فقط) -->
+  <div class="field" id="scheduleWrap" style="display:none;">
+    <div class="print-header">
+      <div class="print-eyebrow print-only">وزارة التعليم — توزيع الأنشطة الطلابية</div>
+      <label id="scheduleTitle">جدول توزيع حصص النشاط تلقائيًا (الاثنين والأربعاء)</label>
+      <div id="scheduleMeta"></div>
+    </div>
+    <div class="sched-table-wrap">
+      <table id="scheduleTable" style="width:100%;border-collapse:collapse;font-size:14px;">
+        <thead>
+          <tr style="background:#f0f0f0;">
+            <th style="border:1px solid #ccc;padding:6px;">الحصة</th>
+            <th style="border:1px solid #ccc;padding:6px;">المجال</th>
+            <th style="border:1px solid #ccc;padding:6px;">النشاط</th>
+            <th style="border:1px solid #ccc;padding:6px;">الأسبوع</th>
+            <th style="border:1px solid #ccc;padding:6px;">اليوم</th>
+            <th style="border:1px solid #ccc;padding:6px;">التاريخ الميلادي</th>
+            <th style="border:1px solid #ccc;padding:6px;">التاريخ الهجري</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </div>
+    <div class="print-footer print-only">
+      <span id="printFooterDate"></span>
+      <span>مُعِدّ خطة النشاط الطلابي</span>
+    </div>
+    <div class="sub-note" id="scheduleNote" style="text-align:right;margin-top:6px;"></div>
+    <div id="scheduleActions" style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn btn-primary" id="downloadScheduleBtn" style="flex:1;">تنزيل الجدول PDF</button>
+      <button class="btn btn-secondary" id="downloadScheduleImageBtn" style="flex:1;">تنزيل الجدول صورة</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>اسم النشاط</label>
+    <input type="text" id="actName" placeholder="مثال: مسابقة الخط العربي">
+  </div>
+
+  <div class="field">
+    <label>هدف النشاط</label>
+    <textarea id="goal" placeholder="ما الذي يهدف النشاط لتحقيقه لدى الطلاب؟"></textarea>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>التاريخ</label>
+      <input type="date" id="date">
+    </div>
+    <div class="field">
+      <label>الوقت</label>
+      <input type="time" id="time">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>المكان</label>
+    <input type="text" id="place" placeholder="مثال: الساحة الداخلية / قاعة النشاط">
+  </div>
+
+  <div class="field">
+    <label>الأدوات والمستلزمات</label>
+    <textarea id="tools" placeholder="اذكر الأدوات المطلوبة لتنفيذ النشاط"></textarea>
+  </div>
+
+  <div class="field">
+    <label>خطوات التنفيذ</label>
+    <textarea id="steps" placeholder="سجّل خطوات تنفيذ النشاط بالترتيب" style="min-height:80px;"></textarea>
+  </div>
+
+  <div class="field">
+    <label>ملاحظات</label>
+    <textarea id="notes" placeholder="أي ملاحظات إضافية"></textarea>
+  </div>
+
+  <div class="preview">
+    <h2>معاينة الخطة</h2>
+    <div class="pv-row"><div class="k">الصف</div><div class="v" id="pvGrade">—</div></div>
+    <div class="pv-row"><div class="k">المدرسة</div><div class="v" id="pvSchool">—</div></div>
+    <div class="pv-row"><div class="k">المعلم</div><div class="v" id="pvTeacher">—</div></div>
+    <div class="pv-row"><div class="k">المجال</div><div class="v" id="pvDomain">—</div></div>
+    <div class="pv-row"><div class="k">البرنامج</div><div class="v" id="pvProgram">—</div></div>
+    <div class="pv-row"><div class="k">عدد الحصص</div><div class="v" id="pvSessions">—</div></div>
+    <div class="pv-row"><div class="k">جدول الحصص</div><div class="v" id="pvSchedule">—</div></div>
+    <div class="pv-row"><div class="k">اسم النشاط</div><div class="v" id="pvName">—</div></div>
+    <div class="pv-row"><div class="k">الهدف</div><div class="v" id="pvGoal">—</div></div>
+    <div class="pv-row"><div class="k">التاريخ والوقت</div><div class="v" id="pvDatetime">—</div></div>
+    <div class="pv-row"><div class="k">المكان</div><div class="v" id="pvPlace">—</div></div>
+    <div class="pv-row"><div class="k">الأدوات</div><div class="v" id="pvTools">—</div></div>
+    <div class="pv-row"><div class="k">خطوات التنفيذ</div><div class="v" id="pvSteps">—</div></div>
+    <div class="pv-row"><div class="k">ملاحظات</div><div class="v" id="pvNotes">—</div></div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="window.print()">طباعة / حفظ PDF</button>
+      <button class="btn btn-secondary" id="resetBtn">تفريغ الخطة</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const schoolInfo = {
+  elem:'مدرسة ابتدائية الهمذاني',
+  mid:'مدرسة متوسطة الترمذي',
+  high:'مدرسة ثانوية أبو بكر الصديق'
+};
+
+const DEFAULT_TEACHERS = [
+  'أحمد سالم أحمد الصهيفي','ناصر قاسم موثل الحريصي','معاذ محمد عبدالرحمن الفايز',
+  'محسن معيوف القحطاني','يحيى سعيد محمد القحطاني','وليد أحمد مفرح المالكي',
+  'حسن عيسى يحيى العزي','أحمد حسن محمد عسيري','حسن مشبب جابر القحطاني',
+  'أحمد طالع علي التليدي','أحمد محمد إبراهيم حكمي','أحمد موسى محمد عياشي',
+  'خالد محمد عبده صفحي','سعد علي مسفر القحطاني','عبدالله جابر مضواح القحطاني',
+  'عبدالله علي محمد الشهري','علي أحمد محمد العمري','صالح مسفر التليدي',
+  'محمد إبراهيم محمد الهلالي','محمد يحيى علي الريثي','نايف حسين سلمان عطيف',
+  'صالح مرجي عليثة الحربي','جارالله محمد سعيد القحطاني','حامد بالغيث علي العامري',
+  'حسام غانم سعيد القحطاني','رائد علي فايع عسيري','طلال سعيد عبدالله القحطاني',
+  'عبدالعزيز عمران عون الصحفي','عبدالله عوض رجاء العوفي','عمر موسى أحمد الناشري',
+  'أحمد حسن طاوي العزي','سلمان محمد صالح العزي','محمد إبراهيم حمد الهيلي',
+  'محمد عمر محمد عسيري','مطلق عايض مطلق الحربي','هادي أحمد يحيى خواجي',
+  'محمد علي جابر القحطاني'
+];
+
+const domainsData = {
+  'المواطنة والحياة': [
+    {name:'التطوع الطلابي', sessions:'4 حصص'},
+    {name:'مهارات طموحة', sessions:'6 حصص'},
+    {name:'قيمنا حياة', sessions:'12 حصة'}
+  ],
+  'العلوم والتقنية': [
+    {name:'تطبيقات STEM', sessions:'3 حصص'},
+    {name:'التصاميم العلمية التقنية', sessions:'2 حصة'},
+    {name:'رواد فضاء المستقبل', sessions:'3 حصص'},
+    {name:'مدن المستقبل', sessions:'3 حصص'},
+    {name:'الذكاء الاصطناعي', sessions:'10 حصص'},
+    {name:'تحدي انترنت الأشياء', sessions:'3 حصص'}
+  ],
+  'الثقافة والفنون': [
+    {name:'الفن السابع (السينما)', sessions:'8 حصص'},
+    {name:'حدائق الفن', sessions:'6 حصص'},
+    {name:'الأزياء السعودية', sessions:'4 حصص'},
+    {name:'الثقافة الإعلامية', sessions:'4 حصص'},
+    {name:'تصاميم تراثية معاصرة', sessions:'5 حصص'},
+    {name:'الفنون المسرحية', sessions:'8 حصص'},
+    {name:'البرنامج الموسيقي (الأناشيد الوطنية)', sessions:'8 حصص'},
+    {name:'حكايات مروية', sessions:'6 حصة'}
+  ],
+  'الرياضة والصحة': [
+    {name:'مهارات الرياضات الجماعية', sessions:'6 حصص'},
+    {name:'مهارات الرياضات الفردية', sessions:'8 حصص'},
+    {name:'مهارات رياضات الدفاع عن النفس', sessions:'8 حصص'},
+    {name:'مهارات الرياضات الالكترونية والترفيه', sessions:'8 حصص'},
+    {name:'مهارات الرياضات الذهنية', sessions:'6 حصص'},
+    {name:'مهارات الاولمبياد الرياضي', sessions:'6 حصص'}
+  ],
+  'النشاط الكشفي': [
+    {name:'من هدي القرآن والسنة'},{name:'درب الاحسان'},{name:'بوصلة الاكتشاف'},
+    {name:'خيمة التجارب المسلية'},{name:'مخيمي التقني'},{name:'واحة الابداع الكشفي'},
+    {name:'عادتي الصحية الكشفية'},{name:'طبقي الكشفي'},{name:'خطواتي الكشفية الصحية'},
+    {name:'مهرجان الأفلام الكشفية الصحية'},{name:'مهاراتي وكشفيتي'},{name:'صافرة واصطفاف'},
+    {name:'مهاراتي الكشفية من الاستعداد الى الإنجاز'},{name:'أفقي الكشفي الواسع'},
+    {name:'خيمتي الجميلة'},{name:'خشبة وحبل'},{name:'الملاحة على اليابس'},
+    {name:'أغامر و اكتشف'},{name:'براعم البيئة والمجتمع'},{name:'أشارك مجتمعي وازرع شجرة'},
+    {name:'مجتمعي وبيئتي مسؤوليتي'},{name:'سفير البيئة والمجتمع'},{name:'بصمتي الكشفية'},
+    {name:'وطني في قلبي'},{name:'صناع التغيير'},{name:'سواعد الكشفية'},
+    {name:'براعم النور'},{name:'كنوز الصغار'}
+  ],
+  'الأيام والمناسبات': [
+    {name:'اليوم الوطني', sessions:'4 حصص', anchorDate:'2026-09-23'},
+    {name:'يوم التأسيس', sessions:'4 حصص'},
+    {name:'يوم السعودية الخضراء', sessions:'3 حصص'},
+    {name:'يوم العلم', sessions:'3 حصص'},
+    {name:'يوم الصحة العالمي', sessions:'2 حصة'},
+    {name:'اليوم العالمي للتعليم', sessions:'2 حصة'},
+    {name:'يوم اللغة العربية العالمي', sessions:'2 حصة', anchorDate:'2026-12-18'},
+    {name:'اليوم العالمي للتسامح', sessions:'2 حصة', anchorDate:'2026-11-16'},
+    {name:'اليوم العالمي للطفل', sessions:'2 حصة', anchorDate:'2026-11-20'},
+    {name:'اليوم العالمي لذوي الاعاقة', sessions:'2 حصة', anchorDate:'2026-12-03'}
+  ],
+  'الفترات اللاصفية': [
+    {name:'القيم', sessions:'1 حصة'},
+    {name:'الذكاء الاجتماعي والعاطفي', sessions:'1 حصة'},
+    {name:'الذوق العام', sessions:'1 حصة'},
+    {name:'الأمن السيبراني', sessions:'3 حصص'},
+    {name:'حياكم'},{name:'الوعي المستنير'},{name:'التربية الإعلامية'}
+  ]
+};
+
+let teachers = [...DEFAULT_TEACHERS];
+const hasStorage = typeof window !== 'undefined' && !!window.storage;
+const TEACHER_KEY = 'nashat:teachers';
+
+async function loadTeachers(){
+  if(!hasStorage){ renderTeachers(); return; }
+  try{
+    const res = await window.storage.get(TEACHER_KEY, false);
+    teachers = (res && res.value) ? JSON.parse(res.value) : [...DEFAULT_TEACHERS];
+  }catch(e){ teachers = [...DEFAULT_TEACHERS]; }
+  renderTeachers();
+  saveTeachers();
+}
+async function saveTeachers(){
+  if(!hasStorage) return;
+  try{ await window.storage.set(TEACHER_KEY, JSON.stringify(teachers), false); }catch(e){}
+}
+function renderTeachers(){
+  const sel = document.getElementById('teacher');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— اختر —</option>' +
+    teachers.map(t=>`<option value="${t}">${t}</option>`).join('');
+  if(teachers.includes(current)) sel.value = current;
+}
+
+const gradeEl = document.getElementById('grade');
+gradeEl.addEventListener('change', ()=>{
+  const opt = gradeEl.selectedOptions[0];
+  const key = opt ? opt.getAttribute('data-school') : null;
+  document.getElementById('schoolNote').textContent = key ? schoolInfo[key] : '';
+  updateSchedule();
+  updatePreview();
+});
+
+const domainSummary = document.getElementById('domainSummary');
+const domainChecklistWrap = document.getElementById('domainChecklistWrap');
+const domainChecklistEl = document.getElementById('domainChecklist');
+let selectedDomains = [];
+
+Object.keys(domainsData).forEach(d=>{
+  const row = document.createElement('div');
+  row.className = 'domain-check-row';
+  row.innerHTML = `<input type="checkbox" data-domain="${d}"> <span>${d}</span>`;
+  row.addEventListener('click', (e)=>{
+    const cb = row.querySelector('input');
+    if(e.target !== cb) cb.checked = !cb.checked;
+    if(cb.checked){
+      if(!selectedDomains.includes(d)) selectedDomains.push(d);
+    } else {
+      selectedDomains = selectedDomains.filter(x=>x!==d);
+    }
+    refreshDomainSummary();
+    rebuildProgramList();
+  });
+  domainChecklistEl.appendChild(row);
+});
+
+domainSummary.addEventListener('click', ()=>{
+  domainChecklistWrap.classList.toggle('show');
+});
+
+function refreshDomainSummary(){
+  domainSummary.textContent = selectedDomains.length
+    ? selectedDomains.join('، ')
+    : 'اختر المجالات (اضغط هنا)';
+}
+
+let selectedPrograms = []; // array of {name, sessions, domain}, in the order the user picked them
+const programWrap = document.getElementById('programWrap');
+const programListEl = document.getElementById('programList');
+
+function isProgramSelected(it){
+  return selectedPrograms.some(p => p.domain === it.domain && p.name === it.name);
+}
+
+function rebuildProgramList(){
+  // إعادة بناء القائمة لا تمسح الاختيارات الحالية، فقط تعيد رسم القائمة حسب المجالات المفعّلة
+  selectedPrograms = selectedPrograms.filter(p => selectedDomains.includes(p.domain));
+
+  if(selectedDomains.length === 0){
+    programWrap.classList.remove('show');
+    updateSchedule();
+    updatePreview();
+    return;
+  }
+  programWrap.classList.add('show');
+
+  let html = '';
+  let globalIndex = 0;
+  const flatItems = [];
+  selectedDomains.forEach(d=>{
+    html += `<div class="program-group-header">${d}</div>`;
+    domainsData[d].forEach(it=>{
+      const item = {...it, domain:d};
+      const isSel = isProgramSelected(item);
+      html += `
+        <div class="program-row${isSel ? ' selected' : ''}" data-i="${globalIndex}">
+          <span>${it.name}</span>
+          <span class="sessions">${it.sessions || ''}</span>
+        </div>`;
+      flatItems.push(item);
+      globalIndex++;
+    });
+  });
+  programListEl.innerHTML = html;
+
+  document.querySelectorAll('.program-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const item = flatItems[parseInt(row.dataset.i)];
+      if(isProgramSelected(item)){
+        selectedPrograms = selectedPrograms.filter(p => !(p.domain===item.domain && p.name===item.name));
+        row.classList.remove('selected');
+      } else {
+        selectedPrograms.push(item);
+        row.classList.add('selected');
+      }
+      // اسم النشاط يتعبى تلقائيًا فقط عند اختيار نشاط واحد؛ عند تعدد الأنشطة يترك للمستخدم
+      const actNameInput = document.getElementById('actName');
+      if(selectedPrograms.length === 1){
+        actNameInput.value = selectedPrograms[0].name;
+      } else if(selectedPrograms.length > 1){
+        actNameInput.value = selectedPrograms.map(p=>p.name).join(' + ');
+      }
+      updateSchedule();
+      updatePreview();
+    });
+  });
+  updateSchedule();
+  updatePreview();
+}
+
+document.getElementById('autoFillOccasionsBtn').addEventListener('click', ()=>{
+  const OCCASIONS_DOMAIN = 'الأيام والمناسبات';
+
+  // فعّل مجال المناسبات إذا ما كان مفعّل
+  if(!selectedDomains.includes(OCCASIONS_DOMAIN)){
+    selectedDomains.push(OCCASIONS_DOMAIN);
+    const cb = domainChecklistEl.querySelector(`input[data-domain="${OCCASIONS_DOMAIN}"]`);
+    if(cb) cb.checked = true;
+    refreshDomainSummary();
+  }
+
+  // أضف كل مناسبة لها تاريخ فعلي ضمن الفصل الأول (anchorDate) لم تكن مختارة أصلًا
+  domainsData[OCCASIONS_DOMAIN].forEach(it=>{
+    if(!it.anchorDate) return;
+    const item = {...it, domain: OCCASIONS_DOMAIN};
+    if(!isProgramSelected(item)) selectedPrograms.push(item);
+  });
+
+  const actNameInput = document.getElementById('actName');
+  if(selectedPrograms.length === 1){
+    actNameInput.value = selectedPrograms[0].name;
+  } else if(selectedPrograms.length > 1){
+    actNameInput.value = selectedPrograms.map(p=>p.name).join(' + ');
+  }
+
+  rebuildProgramList();
+});
+
+// أيام النشاط الفعلية (الاثنين والأربعاء) لكل أسبوع دراسي بالفصل الأول ١٤٤٨/١٤٤٩هـ
+// تم استبعاد: الأربعاء المتوافق مع إجازة اليوم الوطني (الأسبوع الخامس)،
+// كامل أسبوع إجازة الخريف، وأسبوع الاختبارات النهائية (التاسع عشر)
+const HIJRI_MONTHS = {3:'ربيع الأول',4:'ربيع الآخر',5:'جمادى الأولى',6:'جمادى الآخرة',7:'رجب'};
+function fmtHijri(h){ return `${h.d} ${HIJRI_MONTHS[h.m]} ١٤٤٨هـ`; }
+
+const SESSION_DATES = [
+  {week:1,  day:'الإثنين',  date:'2026-08-24', h:{d:11,m:3}},
+  {week:1,  day:'الأربعاء', date:'2026-08-26', h:{d:13,m:3}},
+  {week:2,  day:'الإثنين',  date:'2026-08-31', h:{d:18,m:3}},
+  {week:2,  day:'الأربعاء', date:'2026-09-02', h:{d:20,m:3}},
+  {week:3,  day:'الإثنين',  date:'2026-09-07', h:{d:25,m:3}},
+  {week:3,  day:'الأربعاء', date:'2026-09-09', h:{d:27,m:3}},
+  {week:4,  day:'الإثنين',  date:'2026-09-14', h:{d:3, m:4}},
+  {week:4,  day:'الأربعاء', date:'2026-09-16', h:{d:5, m:4}},
+  {week:5,  day:'الإثنين',  date:'2026-09-21', h:{d:10,m:4}},
+  {week:6,  day:'الإثنين',  date:'2026-09-28', h:{d:17,m:4}},
+  {week:6,  day:'الأربعاء', date:'2026-09-30', h:{d:19,m:4}},
+  {week:7,  day:'الإثنين',  date:'2026-10-05', h:{d:24,m:4}},
+  {week:7,  day:'الأربعاء', date:'2026-10-07', h:{d:26,m:4}},
+  {week:8,  day:'الإثنين',  date:'2026-10-12', h:{d:1, m:5}},
+  {week:8,  day:'الأربعاء', date:'2026-10-14', h:{d:3, m:5}},
+  {week:9,  day:'الإثنين',  date:'2026-10-19', h:{d:8, m:5}},
+  {week:9,  day:'الأربعاء', date:'2026-10-21', h:{d:10,m:5}},
+  {week:10, day:'الإثنين',  date:'2026-10-26', h:{d:15,m:5}},
+  {week:10, day:'الأربعاء', date:'2026-10-28', h:{d:17,m:5}},
+  {week:11, day:'الإثنين',  date:'2026-11-02', h:{d:22,m:5}},
+  {week:11, day:'الأربعاء', date:'2026-11-04', h:{d:24,m:5}},
+  {week:12, day:'الإثنين',  date:'2026-11-09', h:{d:29,m:5}},
+  {week:12, day:'الأربعاء', date:'2026-11-11', h:{d:1, m:6}},
+  {week:13, day:'الإثنين',  date:'2026-11-16', h:{d:6, m:6}},
+  {week:13, day:'الأربعاء', date:'2026-11-18', h:{d:8, m:6}},
+  {week:14, day:'الإثنين',  date:'2026-11-30', h:{d:20,m:6}},
+  {week:14, day:'الأربعاء', date:'2026-12-02', h:{d:22,m:6}},
+  {week:15, day:'الإثنين',  date:'2026-12-07', h:{d:27,m:6}},
+  {week:15, day:'الأربعاء', date:'2026-12-09', h:{d:29,m:6}},
+  {week:16, day:'الإثنين',  date:'2026-12-14', h:{d:5, m:7}},
+  {week:16, day:'الأربعاء', date:'2026-12-16', h:{d:7, m:7}},
+  {week:17, day:'الإثنين',  date:'2026-12-21', h:{d:12,m:7}},
+  {week:17, day:'الأربعاء', date:'2026-12-23', h:{d:14,m:7}},
+  {week:18, day:'الإثنين',  date:'2026-12-28', h:{d:19,m:7}},
+  {week:18, day:'الأربعاء', date:'2026-12-30', h:{d:21,m:7}}
+];
+
+// يوزّع الأنشطة المختارة على أيام النشاط المتاحة:
+// - النشاط المرتبط بمناسبة لها تاريخ فعلي (anchorDate) توزّع حصصه حول ذلك التاريخ (نصفها قبله ونصفها بعده تقريبًا)
+// - أي نشاط آخر يُوزّع بالتتابع على أقرب أيام فاضية
+// ولا يتكرر تاريخ لنشاطين مختلفين
+function allocateSchedule(programs){
+  const used = new Set();
+  let cursor = 0;
+  const results = [];
+
+  programs.forEach(prog=>{
+    const match = (prog.sessions||'').match(/\d+/);
+    if(!match){ results.push({prog, slots:[], noCount:true}); return; }
+    const needed = parseInt(match[0], 10);
+    let slots = [];
+
+    if(prog.anchorDate){
+      const before = [];
+      const after = [];
+      SESSION_DATES.forEach(s=>{
+        const key = s.date + s.day;
+        if(used.has(key)) return;
+        if(s.date < prog.anchorDate) before.push(s);
+        else after.push(s);
+      });
+      const numBefore = Math.floor(needed / 2);
+      const numAfter = needed - numBefore;
+      let chosenBefore = before.slice(-numBefore);
+      let chosenAfter = after.slice(0, numAfter);
+      if(chosenBefore.length < numBefore){
+        const deficit = numBefore - chosenBefore.length;
+        chosenAfter = after.slice(0, numAfter + deficit);
+      } else if(chosenAfter.length < numAfter){
+        const deficit = numAfter - chosenAfter.length;
+        const remainderBefore = before.slice(0, before.length - numBefore);
+        chosenBefore = remainderBefore.slice(-(numBefore + deficit));
+      }
+      slots = [...chosenBefore, ...chosenAfter].sort((a,b)=> a.date.localeCompare(b.date));
+      slots.forEach(s=>used.add(s.date + s.day));
+    } else {
+      let i = cursor;
+      while(slots.length < needed && i < SESSION_DATES.length){
+        const s = SESSION_DATES[i];
+        const key = s.date + s.day;
+        if(!used.has(key)){ slots.push(s); used.add(key); }
+        i++;
+      }
+      cursor = i;
+    }
+    results.push({prog, slots, shortage: slots.length < needed});
+  });
+
+  return {results, usedCount: used.size, totalCount: SESSION_DATES.length};
+}
+
+function updateSchedule(){
+  const scheduleWrap = document.getElementById('scheduleWrap');
+  const scheduleBody = document.getElementById('scheduleBody');
+  const scheduleNote = document.getElementById('scheduleNote');
+  const scheduleTitle = document.getElementById('scheduleTitle');
+  const gradeOpt = gradeEl.selectedOptions[0];
+  const schoolKey = gradeOpt ? gradeOpt.getAttribute('data-school') : null;
+
+  if(selectedPrograms.length === 0){
+    scheduleWrap.style.display = 'none';
+    return [];
+  }
+
+  const namesLabel = selectedPrograms.map(p=>p.name).join('، ');
+  scheduleTitle.textContent = selectedPrograms.length === 1
+    ? `جدول توزيع حصص نشاط «${namesLabel}» تلقائيًا (الاثنين والأربعاء)`
+    : `جدول توزيع حصص الأنشطة (${namesLabel}) تلقائيًا (الاثنين والأربعاء)`;
+
+  const scheduleMeta = document.getElementById('scheduleMeta');
+  const gradeText = gradeOpt ? gradeOpt.textContent : '';
+  const teacherText = document.getElementById('teacher').value;
+  const schoolText = schoolKey ? schoolInfo[schoolKey] : '';
+  const metaParts = [];
+  if(schoolText) metaParts.push(schoolText);
+  if(gradeText) metaParts.push(`الصف: ${gradeText}`);
+  if(teacherText) metaParts.push(`المعلم: ${teacherText}`);
+  scheduleMeta.innerHTML = metaParts.map(t=>`<span class="meta-pill">${t}</span>`).join(' ');
+
+  if(schoolKey !== 'elem'){
+    scheduleWrap.style.display = 'block';
+    scheduleBody.innerHTML = '';
+    scheduleNote.textContent = 'الجدول التلقائي متاح حاليًا للمرحلة الابتدائية فقط (أيام نشاط بقية المراحل غير محددة بعد).';
+    return [];
+  }
+
+  const {results: allocations, usedCount, totalCount} = allocateSchedule(selectedPrograms);
+  let rowsHtml = '';
+  let rowNum = 0;
+  let shortage = false;
+  let noSessionCount = false;
+
+  const flatRows = [];
+  allocations.forEach(({prog, slots, shortage:sh, noCount})=>{
+    if(sh) shortage = true;
+    if(noCount) noSessionCount = true;
+    slots.forEach(s=> flatRows.push({prog, s}));
+  });
+
+  // ترتيب الجدول حسب التسلسل الزمني الفعلي (الأسبوع ثم التاريخ)، بغض النظر عن ترتيب اختيار الأنشطة
+  flatRows.sort((a,b)=> a.s.date.localeCompare(b.s.date));
+
+  flatRows.forEach(({prog, s})=>{
+    rowNum++;
+    rowsHtml += `
+        <tr>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${rowNum}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${prog.domain || ''}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${prog.name}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${s.week}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${s.day}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${fmtDate(s.date)}</td>
+          <td style="border:1px solid #ccc;padding:6px;text-align:center;">${fmtHijri(s.h)}</td>
+        </tr>`;
+  });
+
+  scheduleWrap.style.display = 'block';
+  scheduleBody.innerHTML = rowsHtml;
+
+  const termFinished = usedCount >= totalCount;
+  if(termFinished && shortage){
+    scheduleNote.innerHTML = '🔔 <strong>انتهى الفصل الدراسي الأول!</strong> تم توزيع كل أيام النشاط المتاحة (الاثنين والأربعاء)، ولم يتبقَّ أيام كافية لجدولة كل حصص الأنشطة المختارة.';
+  } else if(termFinished){
+    scheduleNote.innerHTML = '🔔 <strong>انتهى الفصل الدراسي الأول!</strong> تم توزيع جميع أيام النشاط المتاحة على الأنشطة المختارة.';
+  } else if(noSessionCount){
+    scheduleNote.textContent = 'تنبيه: بعض الأنشطة المختارة ليس لها عدد حصص محدد، فاستُثنيت من الجدول.';
+  } else {
+    scheduleNote.textContent = '';
+  }
+  return [];
+}
+
+document.getElementById('teacher').addEventListener('change', ()=>{ updateSchedule(); updatePreview(); });
+['actName','goal','date','time','place','tools','steps','notes'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+function fmtDate(d){
+  if(!d) return '';
+  const p = d.split('-');
+  return `${p[2]}/${p[1]}/${p[0]}`;
+}
+
+function updatePreview(){
+  const set = (id,val)=>{
+    const el = document.getElementById(id);
+    el.textContent = val || '—';
+    el.classList.toggle('pv-empty', !val);
+  };
+  const gradeOpt = gradeEl.selectedOptions[0];
+  const gradeText = gradeEl.value ? gradeOpt.textContent : '';
+  const schoolKey = gradeOpt ? gradeOpt.getAttribute('data-school') : null;
+
+  set('pvGrade', gradeText);
+  set('pvSchool', schoolKey ? schoolInfo[schoolKey] : '');
+  set('pvTeacher', document.getElementById('teacher').value);
+  set('pvDomain', selectedDomains.join('، '));
+  set('pvProgram', selectedPrograms.map(p=>p.name).join('، '));
+  set('pvSessions', selectedPrograms.map(p=>p.sessions).filter(Boolean).join('، '));
+  const gradeOptForSched = gradeEl.selectedOptions[0];
+  const schoolKeyForSched = gradeOptForSched ? gradeOptForSched.getAttribute('data-school') : null;
+  let scheduleText = '';
+  if(selectedPrograms.length && schoolKeyForSched === 'elem'){
+    const {results: allocations} = allocateSchedule(selectedPrograms);
+    const parts = allocations
+      .filter(a => a.slots.length)
+      .map(a => `${a.prog.name}: ` + a.slots.map(s => `${s.day} ${fmtDate(s.date)} (${fmtHijri(s.h)})`).join('، '));
+    scheduleText = parts.join(' | ');
+  }
+  set('pvSchedule', scheduleText);
+  set('pvName', document.getElementById('actName').value.trim());
+  set('pvGoal', document.getElementById('goal').value.trim());
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
+  set('pvDatetime', [date?fmtDate(date):'', time||''].filter(Boolean).join(' — '));
+  set('pvPlace', document.getElementById('place').value.trim());
+  set('pvTools', document.getElementById('tools').value.trim());
+  set('pvSteps', document.getElementById('steps').value.trim());
+  set('pvNotes', document.getElementById('notes').value.trim());
+}
+
+document.getElementById('downloadScheduleBtn').addEventListener('click', ()=>{
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ar-SA', {year:'numeric', month:'long', day:'numeric'});
+  document.getElementById('printFooterDate').textContent = `تاريخ الإنشاء: ${dateStr}`;
+  document.body.classList.add('printing-schedule-only');
+  window.print();
+});
+
+document.getElementById('downloadScheduleImageBtn').addEventListener('click', ()=>{
+  if(typeof html2canvas === 'undefined'){
+    alert('تعذر تحميل أداة تحويل الجدول لصورة. جرّب قصة الشاشة بدلاً من ذلك.');
+    return;
+  }
+  const wrap = document.getElementById('scheduleWrap');
+  const actions = document.getElementById('scheduleActions');
+  const eyebrow = wrap.querySelector('.print-eyebrow');
+  const footer = wrap.querySelector('.print-footer');
+  const prevActionsDisplay = actions.style.display;
+
+  // نجهز عناصر "ورقة الطباعة" الجميلة تظهر بالصورة، ونخفي أزرار التحميل مؤقتًا
+  const now = new Date();
+  document.getElementById('printFooterDate').textContent =
+    `تاريخ الإنشاء: ${now.toLocaleDateString('ar-SA', {year:'numeric', month:'long', day:'numeric'})}`;
+  eyebrow.style.display = 'block';
+  footer.style.display = 'flex';
+  actions.style.display = 'none';
+
+  html2canvas(wrap, {backgroundColor:'#ffffff', scale:2}).then(canvas=>{
+    actions.style.display = prevActionsDisplay;
+    eyebrow.style.display = '';
+    footer.style.display = '';
+    const link = document.createElement('a');
+    link.download = 'جدول-توزيع-النشاط.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }).catch(()=>{
+    actions.style.display = prevActionsDisplay;
+    eyebrow.style.display = '';
+    footer.style.display = '';
+    alert('تعذر إنشاء الصورة. جرّب قصة الشاشة بدلاً من ذلك.');
+  });
+});
+window.addEventListener('afterprint', ()=>{
+  document.body.classList.remove('printing-schedule-only');
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  ['actName','goal','date','time','place','tools','steps','notes'].forEach(id=>document.getElementById(id).value='');
+  gradeEl.value=''; document.getElementById('teacher').value='';
+  selectedDomains = [];
+  domainChecklistEl.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+  domainChecklistWrap.classList.remove('show');
+  refreshDomainSummary();
+  document.getElementById('schoolNote').textContent='';
+  programWrap.classList.remove('show');
+  selectedPrograms = [];
+  updateSchedule();
+  updatePreview();
+});
+
+try{ renderTeachers(); }catch(e){ console.error(e); }
+try{ updatePreview(); }catch(e){ console.error(e); }
+try{ loadTeachers(); }catch(e){ console.error(e); }
+</script>
+</body>
+</html>
